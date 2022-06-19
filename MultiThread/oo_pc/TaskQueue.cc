@@ -23,10 +23,32 @@ bool TaskQueue::isFull() const
 }
 void TaskQueue::push(const int &value)
 {
-    MutexLockGuard autoLock(_mutex);
+    _mutex.lock();
+
+    if (isFull()) {
+        _notFull.wait();
+    }
+    _que.push(value);
+
+    _notEmpty.notify();
+
+    _mutex.unlock();
 }
 int TaskQueue::pop()
 {
+    _mutex.lock();
 
+    if (isEmpty()) {
+        _notEmpty.wait();
+    }
+
+    int temp = _que.front();
+    _que.pop();
+
+    _notFull.notify();
+
+    _mutex.unlock();
+
+    return temp;
 }
 
