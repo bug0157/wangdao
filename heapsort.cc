@@ -20,7 +20,6 @@ public:
  void heapAdjust(size_t ,size_t ,Compare &com);
  void sort(Compare &com);
  void print();
-
 private:
  vector<T> vec;
 };
